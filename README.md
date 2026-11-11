@@ -23,6 +23,143 @@ Sebelum menjalankan project, pastikan sudah menginstall :
 
 # Pengembangan terbaru
 
+# Sistem Informasi Manajemen Surat (Authentication & Authorization) (05/11/2026) Pertemuan Ke-5
+
+Pengembangan ini merupakan kelanjutan dari Pertemuan Ke-4 yang telah memiliki fitur CRUD Surat Masuk. Pada tahap ini, aplikasi mulai menerapkan sistem autentikasi pengguna dan pembatasan hak akses berdasarkan role.
+
+## Perubahan dan Penambahan
+
+### Database Migration – Penambahan Role
+
+- Menambahkan kolom `role` pada tabel `users` menggunakan migration baru.
+- Menggunakan tipe data `string` dengan nilai default `pembaca`.
+- Mempertahankan migration users bawaan Laravel agar data sebelumnya tidak hilang.
+
+File yang diubah:
+- `database/migrations/` – Migration penambahan kolom role pada users.
+
+Perintah:
+```bash
+php artisan make:migration add_role_to_users_table --table=users
+php artisan migrate
+```
+
+### Model User
+
+Memperbarui model `User.php` dengan menambahkan atribut `role` ke dalam `$fillable`.
+
+File:
+- `app/Models/User.php`
+
+Perubahan:
+- Menambahkan `role` ke dalam daftar mass assignment.
+- Mempertahankan atribut `name`, `email`, dan `password`.
+
+### Pembuatan Akun Pengguna
+
+Membuat dua akun untuk kebutuhan pengujian menggunakan Laravel Tinker.
+
+| Role | Hak Akses |
+|---|---|
+| Petugas | Melihat, menambah, mengedit, dan menghapus surat |
+| Pembaca | Hanya melihat daftar dan detail surat |
+
+Perintah:
+```bash
+php artisan tinker
+```
+Membuat akun menggunakan `User::updateOrCreate()` dan `Hash::make()` agar password tersimpan dalam bentuk hash.
+Akun Petugas
+```bash
+User::updateOrCreate(['email'=> 'petugas@example.test'],['name'=> 'Petugas SIM-Surat','password'=> Hash::make('PraktikumP5!2026'), 'role' => 'petugas']); 
+```
+Akun Pembaca
+```bash
+User::updateOrCreate(['email' => 'pembaca@example.test'], ['name' => 'Pembaca SIM-Surat', 'password' => Hash::make ('PraktikumP5!2026'), 'role' => 'pembaca']); 
+```
+### Controller Authentication
+
+Menambahkan controller khusus untuk menangani proses login dan logout.
+
+- `app/Http/Controllers/Auth/LoginController.php`
+
+Method yang ditambahkan:
+
+- `showLoginForm()` – Menampilkan halaman login.
+- `login()` – Memvalidasi email dan password serta melakukan autentikasi menggunakan `Auth::attempt()`.
+- `logout()` – Mengakhiri sesi pengguna menggunakan `Auth::logout()`.
+
+Keamanan session:
+- Menggunakan `session()->regenerate()` setelah login.
+- Menggunakan `session()->invalidate()` ketika logout.
+- Menggunakan `session()->regenerateToken()` untuk memperbarui CSRF token.
+
+### Halaman Login
+
+Menambahkan halaman login menggunakan Blade Template.
+
+- `resources/views/auth/login.blade.php`
+
+Fitur:
+- Form input email.
+- Form input password.
+- Tombol masuk.
+- Validasi dan pesan kesalahan menggunakan Blade Directive `@error`.
+- Perlindungan CSRF menggunakan `@csrf`.
+
+### Gate Authorization
+
+Menambahkan aturan otorisasi menggunakan Gate pada Laravel.
+
+- `app/Providers/AppServiceProvider.php`
+
+Gate yang dibuat:
+```php
+Gate::define('manage-letters', function (User $user): bool {
+    return $user->role === 'petugas';
+});
+```
+
+Gate `manage-letters` digunakan untuk membatasi pengelolaan surat sehingga hanya pengguna dengan role `petugas` yang dapat melakukan operasi CRUD.
+
+### Pengamanan Route
+
+Memperbarui konfigurasi route pada:
+
+- `routes/web.php`
+
+Perubahan:
+- Menggunakan middleware `guest` untuk halaman login.
+- Menggunakan middleware `auth` untuk melindungi dashboard dan halaman surat.
+- Menggunakan middleware `can:manage-letters` untuk membatasi operasi pengelolaan surat.
+- Mempertahankan route Surat Keluar dari pengembangan sebelumnya.
+
+Pembagian hak akses:
+
+| Fitur | Petugas | Pembaca |
+|---|---|---|
+| Dashboard | Diizinkan | Diizinkan |
+| Daftar Surat Masuk | Diizinkan | Diizinkan |
+| Detail Surat Masuk | Diizinkan | Diizinkan |
+| Tambah Surat | Diizinkan | 403 Forbidden |
+| Edit Surat | Diizinkan | 403 Forbidden |
+| Hapus Surat | Diizinkan | 403 Forbidden |
+
+### Penyesuaian Tampilan Blade
+
+Memperbarui tampilan agar menyesuaikan dengan status login dan hak akses pengguna.
+
+File yang disesuaikan:
+- `resources/views/layouts/app.blade.php`
+- `resources/views/surat-masuk/index.blade.php`
+
+Blade Directive yang digunakan:
+
+- `@auth` – Menampilkan informasi pengguna yang sedang login dan tombol logout.
+- `@can('manage-letters')` – Menampilkan tombol tambah, edit, dan hapus hanya untuk petugas.
+
+Tombol Detail tetap dapat diakses oleh semua pengguna yang sudah login.
+
 # Sistem Informasi Manajemen Surat (CRUD & Validasi Surat Masuk) (29/10/2026) Pertemuan Ke-4
 
 Pada pertemuan ke-4, dilakukan pengembangan fitur **CRUD (Create, Read, Update, Delete)** pada Sistem Informasi Manajemen Surat (SIM-Surat), khususnya pada fitur Surat Masuk.
