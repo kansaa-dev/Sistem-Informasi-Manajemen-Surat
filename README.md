@@ -69,6 +69,7 @@ Perintah:
 php artisan tinker
 ```
 Membuat akun menggunakan `User::updateOrCreate()` dan `Hash::make()` agar password tersimpan dalam bentuk hash.
+
 Akun Petugas
 ```bash
 User::updateOrCreate(['email'=> 'petugas@example.test'],['name'=> 'Petugas SIM-Surat','password'=> Hash::make('PraktikumP5!2026'), 'role' => 'petugas']); 
