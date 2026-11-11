@@ -25,6 +25,7 @@
         @error('keterangan') <span style="color:red">{{ $message }}</span> @enderror
     </p>
     <button type="submit">Simpan</button>
-    <a href="{{ route('surat-masuk.index') }}">Batal</a>
+    <button><a href="{{ route('surat-masuk.index') }}">Batal</a></button>
+    
 </form>
 @endsection

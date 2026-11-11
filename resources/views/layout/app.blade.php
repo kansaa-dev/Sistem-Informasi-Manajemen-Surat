@@ -24,6 +24,14 @@
     @yield('content')
     </main>
 
+    @auth
+    <span>Masuk sebagai: {{ auth()->user()->name }}</span>
+    <form method="POST" action="{{ route('logout') }}" style="display: inline">
+        @csrf
+        <button type="submit">Keluar</button>
+    </form>
+    @endauth
+
     <footer>
         <P>Sistem Informasi Surat</P>
     </footer>

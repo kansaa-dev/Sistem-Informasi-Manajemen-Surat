@@ -14,6 +14,11 @@
             <span style="color:red">{{ $message }}</span>
         @enderror
     </p>
+    
+    <p>Pengirim:<br>
+        <input name="pengirim" value="{{ old('pengirim') }}">
+        @error('pengirim') <span style="color:red">{{ $message }}</span> @enderror
+    </p>
 
     <p>Tanggal:
         <input type="date" name="tanggal" value="{{ old('tanggal') }}">
@@ -44,7 +49,10 @@
     </p>
 
     <button type="submit">Simpan</button>
-
-    <a href="{{ route('surat-keluar.index') }}">Batal</a>
+    
+    <button>
+        <a href="{{ route('surat-keluar.index') }}">Batal</a>
+    </button>
+    
 </form>
 @endsection

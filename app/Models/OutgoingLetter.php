@@ -9,6 +9,7 @@ class OutgoingLetter extends Model
     protected $fillable = [
         'nomor_surat',
         'tanggal',
+        'pengirim',
         'tujuan',
         'perihal',
         'keterangan',

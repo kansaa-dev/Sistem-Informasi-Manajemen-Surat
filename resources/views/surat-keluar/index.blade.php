@@ -4,10 +4,10 @@
 
 @section('content')
 <h1>Daftar Surat Keluar</h1>
+<button>
+    <a href="{{ route('surat-keluar.create') }}">+ Tambah Surat</a>
+</button>
 
-<a href="{{ route('surat-keluar.create') }}">
-    + Tambah Surat
-</a>
 
 @if (session('success'))
     <p style="color:green">{{ session('success') }}</p>
@@ -34,14 +34,14 @@
                 <td>{{ $surat->tujuan }}</td>
                 <td>{{ $surat->perihal }}</td>
                 <td>
-                    <a href="{{ route('surat-keluar.show', $surat->id) }}">
-                        Detail
-                    </a>
-
-                    <a href="{{ route('surat-keluar.edit', $surat->id) }}">
-                        Edit
-                    </a>
-
+                <button>
+                    <a href="{{ route('surat-keluar.show', $surat->id) }}">Detail</a>
+                </button>
+                    
+                <button>
+                    <a href="{{ route('surat-keluar.edit', $surat->id) }}">Edit</a>
+                </button>
+                    
                     <form action="{{ route('surat-keluar.destroy', $surat->id) }}"
                           method="POST" style="display:inline">
                         @csrf

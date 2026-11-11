@@ -27,6 +27,7 @@ class SuratKeluarController extends Controller
         $validated = $request->validate([
             'nomor_surat' => 'required|string|max:255',
             'tanggal' => 'required|date',
+            'pengirim' => 'required|string|max:255',
             'tujuan' => 'required|string|max:255',
             'perihal' => 'required|string|max:255',
             'keterangan' => 'nullable|string',

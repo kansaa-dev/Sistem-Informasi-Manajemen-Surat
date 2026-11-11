@@ -7,5 +7,9 @@
 <p>Pengirim: {{ $surat->pengirim }}</p>
 <p>Perihal: {{ $surat->perihal }}</p>
 <p>Keterangan: {{ $surat->keterangan ?? '-' }}</p>
-<a href="{{ route('surat-masuk.index') }}">Kembali</a>
+
+<button>
+    <a href="{{ route('surat-masuk.index') }}">Kembali</a>
+</button>
+
 @endsection
